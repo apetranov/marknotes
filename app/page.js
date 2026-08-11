@@ -11,6 +11,7 @@ import remarkGemoji from "remark-gemoji";
 import remarkRehype from "remark-rehype";
 import rehypeStringify from "rehype-stringify";
 import parse from "html-react-parser";
+import { v4 } from "uuid";
 
 // import remarkGfm from "remark-gfm";
 // import remarkGemoji from "remark-gemoji";
@@ -20,8 +21,37 @@ import "github-markdown-css/github-markdown-dark.css";
 import Link from "next/link";
 
 export default function Home() {
+  const [notes, setNotes] = useState([]);
   const [markdownTxt, setMarkdownTxt] = useState("");
   const [mk, setMk] = useState("");
+
+  useEffect(() => {
+    const savedNotes = localStorage.getItem("notes");
+
+    if (savedNotes) {
+      setNotes(JSON.parse(savedNotes));
+    }
+  }, []);
+
+  const createNote = () => {
+    if (!mk) {
+      alert("Note cannot be empty");
+      return;
+    }
+
+    
+
+    const newNote = {
+      id: v4(),
+      content: mk
+    }
+
+    setNotes(notes.concat(newNote));
+
+    localStorage.setItem("notes", JSON.stringify(notes.concat(newNote)));
+    
+    setMk("");
+  }
 
   const renderMarkdown = async (value) => {
     // Conferts Markdown -> Markdown AST -> HTML AST -> HTML string.  
@@ -76,9 +106,19 @@ export default function Home() {
           setMk(html);
         }}
       />
-      <Button className="bg-black text-white py-1 px-4 rounded-2xl">
+      <Button onClick={createNote} className="bg-black text-white py-1 px-4 rounded-2xl">
         + Create Note
       </Button>
+        
+
+      <div className="grid gap-10 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {notes.map(note => (
+          <div key={note.id} className="markdown-body p-5">
+            {parse(note.content)}
+          </div>
+        ))}
+      </div>
+      
     </div>
   );
 }
