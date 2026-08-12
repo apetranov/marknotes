@@ -33,6 +33,12 @@ export default function Home() {
     }
   }, []);
 
+  const deleteNote = (noteId) => {
+    const updatedNotes = notes.filter(note => note.id !== noteId);
+    setNotes(updatedNotes);
+    localStorage.setItem("notes", JSON.stringify(updatedNotes));
+  }
+
   const createNote = () => {
     if (!mk) {
       alert("Note cannot be empty");
@@ -51,6 +57,7 @@ export default function Home() {
     localStorage.setItem("notes", JSON.stringify(notes.concat(newNote)));
     
     setMk("");
+    setMarkdownTxt("");
   }
 
   const renderMarkdown = async (value) => {
@@ -106,7 +113,7 @@ export default function Home() {
           setMk(html);
         }}
       />
-      <Button onClick={createNote} className="bg-black text-white py-1 px-4 rounded-2xl">
+      <Button onClick={createNote} className="bg-black text-white py-1 px-4 rounded-2xl hover:bg-slate-600 cursor-pointer transition-all duration-200">
         + Create Note
       </Button>
         
@@ -114,6 +121,7 @@ export default function Home() {
       <div className="grid gap-10 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {notes.map(note => (
           <div key={note.id} className="markdown-body p-5">
+            <button onClick={() => deleteNote(note.id)} className="bg-red-900 px-7 py-2 cursor-pointer hover:bg-red-700 transition-all duration-300">Delete</button>
             {parse(note.content)}
           </div>
         ))}
