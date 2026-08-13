@@ -12,6 +12,14 @@ import remarkRehype from "remark-rehype";
 import rehypeStringify from "rehype-stringify";
 import parse from "html-react-parser";
 import { v4 } from "uuid";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 // import remarkGfm from "remark-gfm";
 // import remarkGemoji from "remark-gemoji";
@@ -34,10 +42,10 @@ export default function Home() {
   }, []);
 
   const deleteNote = (noteId) => {
-    const updatedNotes = notes.filter(note => note.id !== noteId);
+    const updatedNotes = notes.filter((note) => note.id !== noteId);
     setNotes(updatedNotes);
     localStorage.setItem("notes", JSON.stringify(updatedNotes));
-  }
+  };
 
   const createNote = () => {
     if (!mk) {
@@ -45,23 +53,21 @@ export default function Home() {
       return;
     }
 
-    
-
     const newNote = {
       id: v4(),
-      content: mk
-    }
+      content: mk,
+    };
 
     setNotes(notes.concat(newNote));
 
     localStorage.setItem("notes", JSON.stringify(notes.concat(newNote)));
-    
+
     setMk("");
     setMarkdownTxt("");
-  }
+  };
 
   const renderMarkdown = async (value) => {
-    // Conferts Markdown -> Markdown AST -> HTML AST -> HTML string.  
+    // Conferts Markdown -> Markdown AST -> HTML AST -> HTML string.
     const result = await unified()
       .use(remarkParse)
       .use(remarkGfm)
@@ -113,20 +119,30 @@ export default function Home() {
           setMk(html);
         }}
       />
-      <Button onClick={createNote} className="bg-black text-white py-1 px-4 rounded-2xl hover:bg-slate-600 cursor-pointer transition-all duration-200">
+      <Button
+        onClick={createNote}
+        className="bg-black text-white py-1 px-4 rounded-2xl hover:bg-slate-600 cursor-pointer transition-all duration-200"
+      >
         + Create Note
       </Button>
-        
 
       <div className="grid gap-10 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {notes.map(note => (
+        {notes.map((note) => (
           <div key={note.id} className="markdown-body p-5">
-            <button onClick={() => deleteNote(note.id)} className="bg-red-900 px-7 py-2 cursor-pointer hover:bg-red-700 transition-all duration-300">Delete</button>
+            <Dialog>
+              <DialogTrigger className="bg-red-900 rounded-lg px-7 py-2 cursor-pointer hover:bg-red-700 transition-all duration-300">Delete</DialogTrigger>
+              <DialogContent className="bg-white">
+                <DialogHeader>
+                  <DialogTitle>Are you sure you want to delete this note?</DialogTitle>
+                  
+                </DialogHeader>
+                <Button onClick={() => deleteNote(note.id)} className="cursor-pointer bg-slate-900 text-white w-1/3 rounded-lg py-2 px-5 hover:bg-slate-700 transition-all duration-200">Yes, delete</Button>
+              </DialogContent>
+            </Dialog>
             {parse(note.content)}
           </div>
         ))}
       </div>
-      
     </div>
   );
 }
