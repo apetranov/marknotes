@@ -1,4 +1,5 @@
  # MarkNotes🗒️
+<img width="1280" height="720" alt="thumb (2)" src="https://github.com/user-attachments/assets/080f95eb-7611-40cf-9010-6d2c01e54c3e" />
 
  Create notes with markdown syntax + generate note tags with AI✨
 
